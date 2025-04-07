@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Обязательные подписки - Административная панель{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Обязательные подписки</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Всего наград</h5>
+                <p class="card-text display-4">{{ stats.rewards_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Выдано звёзд</h5>
+                <p class="card-text display-4">{{ stats.total_stars }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Уникальных пользователей</h5>
+                <p class="card-text display-4">{{ stats.unique_users }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Управление каналами</h5>
+                <a href="/channels" class="btn btn-light btn-sm mt-2">Настроить каналы</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">История наград за подписки</h5>
+    </div>
+    <div class="card-body">
+        {% if rewards|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Канал</th>
+                        <th>Награда</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reward in rewards %}
+                    <tr>
+                        <td>{{ reward.id }}</td>
+                        <td>{{ reward.user_id }}</td>
+                        <td>{{ reward.channel_name }} ({{ reward.channel_id }})</td>
+                        <td>{{ reward.stars_amount }} звёзд</td>
+                        <td>{{ reward.reward_date.strftime('%d.%m.%Y %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center">Нет данных о наградах за подписки</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

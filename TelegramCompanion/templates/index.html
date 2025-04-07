@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Звездный бот - Админпанель{% endblock %}
+
+{% block content %}
+<div class="card p-5 text-center">
+    <h1 class="display-4 mb-4">
+        <i class="bi bi-stars text-warning me-2"></i>
+        Звездный бот - Админпанель
+    </h1>
+    <p class="lead">Система управления пользователями, заданиями и выводами для Telegram бота</p>
+    
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-speedometer2 text-primary me-2"></i>
+                        Дашборд
+                    </h5>
+                    <p class="card-text">Просмотр статистики и основных показателей бота</p>
+                    <a href="/dashboard" class="btn btn-secondary">Перейти к дашборду</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-people text-success me-2"></i>
+                        Пользователи
+                    </h5>
+                    <p class="card-text">Управление пользователями и их балансами</p>
+                    <a href="/users" class="btn btn-secondary">Управление пользователями</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-card-checklist text-info me-2"></i>
+                        Задания
+                    </h5>
+                    <p class="card-text">Управление заданиями и наградами</p>
+                    <a href="/tasks" class="btn btn-secondary">Управление заданиями</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-cash-coin text-warning me-2"></i>
+                        Выводы
+                    </h5>
+                    <p class="card-text">Управление заявками на вывод звезд</p>
+                    <a href="/withdrawals" class="btn btn-secondary">Управление выводами</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

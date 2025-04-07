@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}История офферов SubGram | Панель администратора{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>История офферов SubGram</h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+            <i class="bi bi-plus-circle"></i> Добавить оффер
+        </button>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Всего офферов</h5>
+                    <h2 class="display-6">{{ stats.total_offers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Выполнено</h5>
+                    <h2 class="display-6">{{ stats.completed_offers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Ожидает</h5>
+                    <h2 class="display-6">{{ stats.pending_offers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Отклонено</h5>
+                    <h2 class="display-6">{{ stats.rejected_offers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Всего наград</h5>
+                    <h2 class="display-6">{{ stats.total_rewards }}⭐</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Уникальных пользователей</h5>
+                    <h2 class="display-6">{{ stats.unique_users }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if offers %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Канал</th>
+                    <th>Награда</th>
+                    <th>Статус</th>
+                    <th>Дата создания</th>
+                    <th>Дата выполнения</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in offers %}
+                <tr>
+                    <td>{{ offer.id }}</td>
+                    <td>{{ offer.user_id }}</td>
+                    <td>{{ offer.channel_name or "Не указано" }}</td>
+                    <td>{{ offer.reward_amount }}⭐</td>
+                    <td>
+                        {% if offer.status == 'completed' %}
+                        <span class="badge bg-success">Выполнено</span>
+                        {% elif offer.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Ожидает</span>
+                        {% else %}
+                        <span class="badge bg-danger">Отклонено</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ offer.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td>{{ offer.completed_at.strftime('%d.%m.%Y %H:%M') if offer.completed_at else "—" }}</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Статус
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <form action="{{ url_for('update_subgram_offer', offer_id=offer.id) }}" method="post">
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" class="dropdown-item">Выполнено</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="{{ url_for('update_subgram_offer', offer_id=offer.id) }}" method="post">
+                                        <input type="hidden" name="status" value="pending">
+                                        <button type="submit" class="dropdown-item">Ожидает</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="{{ url_for('update_subgram_offer', offer_id=offer.id) }}" method="post">
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button type="submit" class="dropdown-item">Отклонено</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        История офферов пуста. Предложите пользователям подписаться на каналы через бота.
+    </div>
+    {% endif %}
+</div>
+
+<!-- Модальное окно для добавления оффера -->
+<div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addOfferModalLabel">Добавить оффер</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('add_subgram_offer') }}" method="post">
+                    <div class="mb-3">
+                        <label for="user_id" class="form-label">ID пользователя</label>
+                        <input type="number" class="form-control" id="user_id" name="user_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="offer_url" class="form-label">URL оффера</label>
+                        <input type="text" class="form-control" id="offer_url" name="offer_url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="channel_name" class="form-label">Название канала</label>
+                        <input type="text" class="form-control" id="channel_name" name="channel_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reward_amount" class="form-label">Награда (звезды)</label>
+                        <input type="number" class="form-control" id="reward_amount" name="reward_amount" value="10">
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

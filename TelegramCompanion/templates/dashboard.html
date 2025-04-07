@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Дашборд - Звездный бот{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-secondary">
+        <h3 class="card-title mb-0">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Дашборд
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Пользователей</h5>
+                        <h2 class="display-5 text-primary">{{ stats.users_count }}</h2>
+                        <p class="text-muted">Всего зарегистрировано</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Заданий</h5>
+                        <h2 class="display-5 text-success">{{ stats.tasks_count }}</h2>
+                        <p class="text-muted">Доступно для выполнения</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Выводов</h5>
+                        <h2 class="display-5 text-warning">{{ stats.pending_withdrawals }}</h2>
+                        <p class="text-muted">Ожидает обработки</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Subgram</h5>
+                        <h2 class="display-5 text-info">{{ stats.subgram_exchanges_count }}</h2>
+                        <p class="text-muted">Обменов выполнено</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between mb-3">
+                    <h5>Статистика Subgram</h5>
+                    <a href="{{ url_for('subgram_exchanges') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-right"></i> Подробнее
+                    </a>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Обменяно звезд</h6>
+                                <h4>{{ stats.total_stars|default(0) }}</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">На сумму (руб)</h6>
+                                <h4>{{ stats.total_subgram_rubles|default(0) }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-secondary d-flex justify-content-between align-items-center">
+        <h3 class="card-title mb-0">
+            <i class="bi bi-trophy me-2"></i>
+            Топ пользователей
+        </h3>
+        <div>
+            <form action="{{ url_for('reset_stars') }}" method="POST" onsubmit="return confirm('Вы уверены, что хотите обнулить звезды у ВСЕХ пользователей? Это действие необратимо!');">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash me-1"></i> Обнулить все звезды
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Имя</th>
+                        <th>Username</th>
+                        <th>Звезд</th>
+                        <th>Рефералов</th>
+                        <th>Заданий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in top_users %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>
+                            {% if user.username %}
+                                @{{ user.username }}
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge text-bg-success">{{ user.stars }}</span>
+                        </td>
+                        <td>{{ user.referrals_count }}</td>
+                        <td>{{ user.completed_tasks }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">Нет данных о пользователях</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
